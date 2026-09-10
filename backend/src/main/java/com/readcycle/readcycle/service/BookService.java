@@ -16,17 +16,34 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.readcycle.readcycle.repository.UserRepository;
 
 @Service
 public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     // CREATE
     public BookResponseDTO createBook(BookRequestDTO request) {
 
         Book book = BookMapper.toEntity(request);
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"))
+                .getId();
+
+        book.setOwnerId(userId);
 
         Book savedBook = bookRepository.save(book);
 

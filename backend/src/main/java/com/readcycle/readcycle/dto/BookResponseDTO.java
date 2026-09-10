@@ -7,16 +7,25 @@ public class BookResponseDTO {
     private String author;
     private String description;
     private Boolean available;
+    private Long ownerId;
 
     public BookResponseDTO() {
     }
 
-    public BookResponseDTO(Long id, String title, String author, String description, Boolean available) {
+    public BookResponseDTO(
+            Long id,
+            String title,
+            String author,
+            String description,
+            Boolean available,
+            Long ownerId) {
+
         this.id = id;
         this.title = title;
         this.author = author;
         this.description = description;
         this.available = available;
+        this.ownerId = ownerId;
     }
 
     // Getters
@@ -41,6 +50,10 @@ public class BookResponseDTO {
         return available;
     }
 
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
     // Setters
 
     public void setId(Long id) {
@@ -61,5 +74,9 @@ public class BookResponseDTO {
 
     public void setAvailable(Boolean available) {
         this.available = available;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 }

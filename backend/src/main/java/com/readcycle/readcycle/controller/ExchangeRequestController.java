@@ -49,4 +49,9 @@ public class ExchangeRequestController {
     public ExchangeResponseDTO rejectExchangeRequest(@PathVariable Long id) {
         return exchangeRequestService.rejectExchangeRequest(id);
     }
+    @DeleteMapping("/{id}")
+    public String cancelExchangeRequest(@PathVariable Long id) {
+        exchangeRequestService.cancelExchangeRequest(id);
+        return "Exchange request cancelled successfully.";
+    }
 }

@@ -6,6 +6,7 @@ import BookDetails from './pages/BookDetails'
 import Login from './pages/Login'
 import Wishlist from './pages/Wishlist'
 import ExchangeRequests from './pages/ExchangeRequests'
+import ListBook from './pages/ListBook'
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/exchange" element={<ExchangeRequests />} />
+        <Route path="/list-book" element={<ListBook />} />
 
       </Routes>
     </BrowserRouter>

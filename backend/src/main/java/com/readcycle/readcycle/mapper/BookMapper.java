@@ -36,7 +36,8 @@ public class BookMapper {
                 book.getTitle(),
                 book.getAuthor(),
                 book.getDescription(),
-                book.isAvailable()
+                book.isAvailable(),
+                book.getOwnerId()
         );
     }
 }
