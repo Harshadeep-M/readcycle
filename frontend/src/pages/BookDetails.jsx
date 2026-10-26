@@ -13,6 +13,7 @@ function BookDetails() {
 
   const [exchangeMessage, setExchangeMessage] = useState('')
   const [exchangeLoading, setExchangeLoading] = useState(false)
+  const [exchangeRequestId, setExchangeRequestId] = useState(null)
 
   useEffect(() => {
     fetch(`http://localhost:8080/books/${id}`)
@@ -50,6 +51,38 @@ function BookDetails() {
     }
 
     checkWishlist()
+  }, [id])
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId')
+
+    if (!userId) {
+      return
+    }
+
+    const checkExchangeRequest = async () => {
+      try {
+        const data = await apiFetch('/exchange')
+
+        const pendingRequest = data.find(
+          request =>
+            request.requesterId === Number(userId) &&
+            request.bookId === Number(id) &&
+            request.status === 'PENDING'
+        )
+
+        if (pendingRequest) {
+          setExchangeRequestId(pendingRequest.id)
+        }
+      } catch (error) {
+        console.error(
+          'Error checking exchange request:',
+          error
+        )
+      }
+    }
+
+    checkExchangeRequest()
   }, [id])
 
   const handleWishlist = async () => {
@@ -99,22 +132,37 @@ function BookDetails() {
     setExchangeMessage('')
 
     try {
-      await apiFetch('/exchange', {
-        method: 'POST',
-        body: JSON.stringify({
-          requesterId: Number(userId),
-          bookId: Number(id)
+      if (exchangeRequestId) {
+        await apiFetch(`/exchange/${exchangeRequestId}`, {
+          method: 'DELETE'
         })
-      })
 
-      setExchangeMessage('Exchange request sent successfully.')
-    } catch (error) {
-      console.error('Exchange request error:', error)
-      setExchangeMessage('Could not send exchange request.')
-    } finally {
-      setExchangeLoading(false)
+        setExchangeRequestId(null)
+        setExchangeMessage('Exchange request cancelled.')
+      } else {
+        const data = await apiFetch('/exchange', {
+          method: 'POST',
+          body: JSON.stringify({
+            requesterId: Number(userId),
+            bookId: Number(id)
+          })
+        })
+
+        setExchangeRequestId(data.id)
+        setExchangeMessage(
+          'Exchange request sent successfully.'
+        )
+      }
+    }  catch (error) {
+        console.error(
+          'Exchange request error:',
+          error
+        )
+        setExchangeMessage(error.message)
+      }
+
     }
-  }
+
 
   if (!book) {
     return <p className="loading">Loading...</p>
@@ -135,7 +183,9 @@ function BookDetails() {
 
         <div className="details-info">
 
-          <p className="details-label">BOOK DETAILS</p>
+          <p className="details-label">
+            BOOK DETAILS
+          </p>
 
           <h1>{book.title}</h1>
 
@@ -153,7 +203,9 @@ function BookDetails() {
                   : 'status unavailable'
               }
             >
-              {book.available ? 'Available' : 'Not Available'}
+              {book.available
+                ? 'Available'
+                : 'Not Available'}
             </span>
           </div>
 
@@ -178,8 +230,10 @@ function BookDetails() {
               disabled={exchangeLoading}
             >
               {exchangeLoading
-                ? 'Sending...'
-                : 'Request Exchange'}
+                ? 'Processing...'
+                : exchangeRequestId
+                  ? 'Cancel Exchange Request'
+                  : 'Request Exchange'}
             </button>
 
           </div>
