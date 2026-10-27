@@ -16,7 +16,7 @@ function BookDetails() {
   const [exchangeRequestId, setExchangeRequestId] = useState(null)
 
   useEffect(() => {
-    fetch(`http://localhost:8080/books/${id}`)
+    fetch(`https://readcycle-backend-wgl6.onrender.com/books/${id}`)
       .then(response => response.json())
       .then(data => {
         setBook(data)

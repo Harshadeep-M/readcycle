@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -98,7 +99,12 @@ function Login() {
           <p className="login-message">
             {message}
           </p>
+
         )}
+
+        <p className="login-description">
+          Don't have an account? <Link to="/signup">Sign Up</Link>
+        </p>
 
       </div>
 
